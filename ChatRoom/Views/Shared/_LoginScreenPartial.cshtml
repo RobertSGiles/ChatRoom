@@ -1,0 +1,52 @@
+<div class="login-container">
+    <h1 class="display-4">Login Page</h1><br />
+    <input type="text" class="username_input" id="username-input" />
+    <input type="button" id="login-button" value="Sign In">
+</div>
+
+<style type="text/css">
+    .login-container {
+        position: absolute;
+        display: none;
+        top: 50%;
+        left: 50%;
+        -moz-transform: translateX(-50%) translateY(-50%);
+        -webkit-transform: translateX(-50%) translateY(-50%);
+        transform: translateX(-50%) translateY(-50%);
+    }
+</style>
+
+<script type="application/javascript">
+
+    (function() {
+
+        var usernameInput = $('#username-input');
+        var loginButton = $('#login-button');
+
+        $.subscribe("/login/error", () => {
+            $('.login-container').css('display', 'block');
+        });
+
+        $.subscribe("/login/success", () => {
+            $('.login-container').css('display', 'none');
+        });
+
+        $( document ).ready(function() {
+            $.get( "get-user-from-session").done(function(error) {
+                $.publish("/login/success");
+              })
+            .fail(function() {
+              $.publish("/login/error");
+            });
+        });
+
+        loginButton.click(function() {
+            $.post( "login-session", {
+                username: usernameInput.val()
+                }, function( data ) {
+            });
+            $.publish("/login/success");
+        })
+    }());
+
+</script>
